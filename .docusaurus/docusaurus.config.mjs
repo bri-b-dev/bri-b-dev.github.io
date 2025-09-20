@@ -4,9 +4,9 @@
  * Modify the docusaurus.config.js file at your site's root instead.
  */
 export default {
-  "title": "Brigitte Boehm's homepage",
+  "title": "Brigitte Böhm's homepage",
   "tagline": "Cloud & Data Platform Engineer",
-  "favicon": "img/favicon.ico",
+  "favicon": "img/favicon.svg",
   "future": {
     "v4": {
       "removeLegacyPostBuildHeadAttribute": true,
@@ -142,7 +142,7 @@ export default {
           ]
         }
       ],
-      "copyright": "© 2025 Brigitte Boehm"
+      "copyright": "© 2025 Brigitte Böhm"
     },
     "prism": {
       "theme": {

@@ -5,9 +5,9 @@ import type * as Preset from '@docusaurus/preset-classic';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Brigitte Boehm\'s homepage',
+  title: 'Brigitte Böhm\'s homepage',
   tagline: 'Cloud & Data Platform Engineer',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.svg',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -111,7 +111,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `© ${new Date().getFullYear()} Brigitte Boehm`,
+      copyright: `© ${new Date().getFullYear()} Brigitte Böhm`,
     },
     prism: {
       theme: prismThemes.github,
