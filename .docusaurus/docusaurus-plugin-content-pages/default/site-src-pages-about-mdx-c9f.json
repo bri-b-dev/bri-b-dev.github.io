@@ -1,0 +1,10 @@
+{
+  "type": "mdx",
+  "permalink": "/about",
+  "source": "@site/src/pages/about.mdx",
+  "description": "{/ Hero with claim /}",
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "unlisted": false
+}

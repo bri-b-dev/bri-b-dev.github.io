@@ -1,0 +1,12 @@
+{
+  "type": "mdx",
+  "permalink": "/",
+  "source": "@site/src/pages/index.mdx",
+  "title": "Home",
+  "description": "Cloud & Data Platform Engineer – Backend (Java/Kotlin, Spring Boot), Kubernetes, Azure, DevOps & GitOps",
+  "frontMatter": {
+    "title": "Home",
+    "description": "Cloud & Data Platform Engineer – Backend (Java/Kotlin, Spring Boot), Kubernetes, Azure, DevOps & GitOps"
+  },
+  "unlisted": false
+}
