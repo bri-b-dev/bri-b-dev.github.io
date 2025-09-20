@@ -25,3 +25,4 @@ out/
 *.old
 *.orig
 .docusaurus/
+build/
