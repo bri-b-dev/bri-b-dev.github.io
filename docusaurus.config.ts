@@ -42,13 +42,14 @@ const config: Config = {
     [
       'classic',
       {
-        docs: {
-          sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/bri-b-dev/bri-b-dev.github.io/tree/main/packages/create-docusaurus/templates/shared/',
-        },
+        docs: false,
+        // docs: {
+        //   sidebarPath: './sidebars.ts',
+        //   // Please change this to your repo.
+        //   // Remove this to remove the "edit this page" links.
+        //   editUrl:
+        //     'https://github.com/bri-b-dev/bri-b-dev.github.io/tree/main/packages/create-docusaurus/templates/shared/',
+        // },
         blog: {
           showReadingTime: true,
           feedOptions: {
@@ -86,7 +87,7 @@ const config: Config = {
         src: 'img/logo.svg',
       },
       items: [
-        {to: '/docs/about', label: 'About', position: 'left'},
+        {to: '/about', label: 'About', position: 'left'},
         {to: '/blog', label: 'Blog', position: 'left'},
         {href: 'mailto:brigitte_boehm@outlook.de', label: 'Kontakt', position: 'right'},
         {href: 'https://github.com/bri-b-dev', label: 'GitHub', position: 'right'},
@@ -98,7 +99,7 @@ const config: Config = {
         {
           title: 'Navigation',
           items: [
-            {label: 'About', to: '/docs/about'},
+            {label: 'About', to: '/about'},
             {label: 'Blog', to: '/blog'},
           ],
         },
