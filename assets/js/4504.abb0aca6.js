@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkbri_b_dev_github_io=self.webpackChunkbri_b_dev_github_io||[]).push([[4504],{4504:(e,b,i)=>{i.d(b,{createTreemapServices:()=>_.d});var _=i(3758);i(8198)}}]);

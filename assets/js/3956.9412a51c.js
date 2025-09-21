@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkbri_b_dev_github_io=self.webpackChunkbri_b_dev_github_io||[]).push([[3956],{3956:(e,b,i)=>{i.d(b,{createRadarServices:()=>_.f});var _=i(2852);i(8198)}}]);
