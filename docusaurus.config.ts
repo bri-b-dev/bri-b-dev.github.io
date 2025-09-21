@@ -34,9 +34,16 @@ const config: Config = {
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: 'de',
+    locales: ['en','de'],
+    localeConfigs: {
+      de: { label: 'Deutsch', htmlLang: 'de' },
+      en: { label: 'English', htmlLang: 'en' },
+    },
   },
+
+  markdown: { mermaid: true },
+  themes: ['@docusaurus/theme-mermaid'],
 
   presets: [
     [
@@ -45,10 +52,6 @@ const config: Config = {
         docs: false,
         // docs: {
         //   sidebarPath: './sidebars.ts',
-        //   // Please change this to your repo.
-        //   // Remove this to remove the "edit this page" links.
-        //   editUrl:
-        //     'https://github.com/bri-b-dev/bri-b-dev.github.io/tree/main/packages/create-docusaurus/templates/shared/',
         // },
         blog: {
           showReadingTime: true,
@@ -56,10 +59,6 @@ const config: Config = {
             type: ['rss', 'atom'],
             xslt: true,
           },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/bri-b-dev/bri-b-dev.github.io/tree/main/packages/create-docusaurus/templates/shared/',
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
@@ -89,8 +88,10 @@ const config: Config = {
       items: [
         {to: '/about', label: 'About', position: 'left'},
         {to: '/blog', label: 'Blog', position: 'left'},
+        {to: '/projects', label: 'Projects', position: 'left'},
         {href: 'mailto:brigitte_boehm@outlook.de', label: 'Kontakt', position: 'right'},
         {href: 'https://github.com/bri-b-dev', label: 'GitHub', position: 'right'},
+        {type: 'localeDropdown', position: 'right'},
       ],
     },
     footer: {
@@ -101,6 +102,7 @@ const config: Config = {
           items: [
             {label: 'About', to: '/about'},
             {label: 'Blog', to: '/blog'},
+            {label: 'Projects', to: '/projects'}
           ],
         },
         {

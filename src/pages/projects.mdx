@@ -1,0 +1,45 @@
+---
+title: Projekte
+description: Kleine Projekte, an denen ich arbeite
+---
+
+## Handycap
+
+Seit der Einführung des World Handicap Index (WHI) hat sich die Berechnung des Handicaps im Golf verändert. Während früher nach einem Turnier eine schnelle „Bierzettel-Rechnung“ genügte, wird das neue Handicap heute zentral über den Golfverband berechnet und meist erst am Folgetag veröffentlicht. Spieler:innen wissen also nicht direkt nach der Runde, wie sich ihr Ergebnis auf ihr Handicap auswirkt – was für viele frustrierend und unpraktisch ist, gerade wenn man seine Leistung zeitnah reflektieren möchte.
+
+**Handycap** schließt genau diese Lücke: Die App ermöglicht es, direkt nach dem Turnier oder einer Privatrunde das Scoredifferential zu berechnen und – sofern das persönliche Stammblatt hinterlegt ist – auch das voraussichtliche neue Handicap anzuzeigen. Damit erhalten Golfer:innen sofortige Transparenz über ihre Ergebnisse, ohne auf die offizielle Verbandsberechnung warten zu müssen.
+
+### Was kann *Handycap*?
+
+* **Scoredifferential berechnen** basierend auf gespieltem Ergebnis, Platz- und Course-Rating, Slope usw.
+* **Handicap-Prognose anzeigen**, wenn das Stammblatt hinterlegt ist
+* **Schnelle Eingabe** von Runden- und Platzdaten, optimiert für mobile Nutzung
+* **Direktes Feedback** zur Leistung nach der Runde – unabhängig davon, wann der Verband die offiziellen Werte veröffentlicht
+
+### Technische Umsetzung
+
+Die App wurde mit **Vue 3** (Composition API, TypeScript) entwickelt und nutzt **Vite** als modernen Build-Toolchain.
+
+* **Mobile App**: Umsetzung über **Capacitor**, wodurch aus der Web-App native Android- und iOS-Builds erzeugt werden können.
+* **State & Daten**: Speicherung der Stammblatt- und Rundendaten lokal in der App über **Dexie.js** (IndexedDB).
+* **UI & UX**: Material-Design-Icons und responsive Layouts für einfache Bedienung auf Smartphones.
+* **Visualisierung**: Integration von **Chart.js** inkl. Adapter für Datumswerte, um z. B. Handicap-Entwicklungen grafisch darzustellen.
+* **Internationalisierung**: Mit **vue-i18n** vorbereitet für mehrsprachige Oberflächen.
+
+Aktuell liegt *Handycap* als **APK** vor und ist **noch nicht im Play Store veröffentlicht**. Interessierte können sich direkt bei mir melden, um die App zu erhalten.
+
+### Mehrwert
+
+* Sofortige Rückmeldung statt Warten bis zum Folgetag
+* Einfach verständliche Berechnungen für alle Spielstärken
+* Praktisches Werkzeug für ambitionierte Golfer\:innen, die ihre Entwicklung eng verfolgen möchten
+* Ergänzung zu den offiziellen Systemen – keine Konkurrenz, sondern ein direkter Alltagshelfer
+
+### Ausblick
+
+In Zukunft kann *Handycap* erweitert werden, z. B. durch:
+
+* Integration von gespeicherten Scorekarten und Statistiken
+* Vergleich mit vergangenen Runden
+* Sharing-Funktionen für Flights oder Freunde
+* Optional: Schnittstellen zu Club- oder Verbands-Systemen
