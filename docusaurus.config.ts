@@ -124,7 +124,7 @@ const config: Config = {
     // Optional: Announcement Bar
     announcementBar: {
       id: 'job-hint',
-      content: '🚀 Offen für spannende Rollen in Backend & Cloud – <a href="mailto:brigitte.boehm@outlook.de">Kontakt</a>',
+      content: '🚀 Offen für spannende Rollen in Backend & Cloud – <a href="mailto:brigitte_boehm@outlook.de">Kontakt</a>',
       isCloseable: true,
     },
   } satisfies Preset.ThemeConfig,
