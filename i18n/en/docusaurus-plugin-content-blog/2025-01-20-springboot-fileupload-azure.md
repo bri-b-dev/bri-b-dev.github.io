@@ -86,7 +86,7 @@ class TikaInputStream(private val source: InputStream) : InputStream() {
 For certain data types, **on-the-fly compression** is worthwhile. This involves packing the upload stream directly into a `GZIPOutputStream` before it is transferred to Azure:
 
 ```kotlin
-val blobClient = containerClient.getBlobClient(“${item.name}.gz”)
+val blobClient = containerClient.getBlobClient(“${item.name}.gz")
 blobClient.getBlockBlobClient().upload(
     GZIPOutputStream(item.inputStream),
     item.size, // unknown if necessary, then use -1 and chunked upload

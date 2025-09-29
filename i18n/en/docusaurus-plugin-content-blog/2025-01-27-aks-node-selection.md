@@ -1,10 +1,10 @@
 ---
 slug: aks-node-selection
-title: “AKS Node Selection: Physical Pools vs. Virtual Nodes”
+title: "AKS Node Selection: Physical Pools vs. Virtual Nodes"
 authors: brigitte
 tags: [kubernetes, aks, azure, nodepool, virtual-node, scheduling]
 date: 2025-01-27
-description: “Strategies for running workloads in AKS preferentially on physical user nodes – with automatic fallback to virtual nodes.”
+description: "Strategies for running workloads in AKS preferentially on physical user nodes – with automatic fallback to virtual nodes."
 ---
 
 import Admonition from '@theme/Admonition';
@@ -25,7 +25,7 @@ In many projects, the **cost and resource model** is crucial:
 ---
 
 ## 🚧 Challenge
-By default, Kubernetes distributes pods evenly – without “preference.”  
+By default, Kubernetes distributes pods evenly – without “preference."  
 If you want to use virtual nodes **only as a stopgap measure**, you need a clean scheduling strategy.
 
 ---
@@ -39,10 +39,10 @@ If you want to use virtual nodes **only as a stopgap measure**, you need a clean
 
 ```yaml
 tolerations:
-  - key: “virtual-kubelet.io/provider”
-    operator: “Equal”
-    value: “azure”
-    effect: “NoSchedule”
+  - key: “virtual-kubelet.io/provider"
+    operator: “Equal"
+    value: “azure"
+    effect: “NoSchedule"
 ````
 
 ➡️ Advantage: full control, default = user nodes, virtual nodes = fallback.
@@ -53,8 +53,8 @@ tolerations:
 
 `nodeAffinity` can be used to express a **preference**:
 
-* “Prefer user nodes” (preferred)
-* “Allow virtual nodes” (soft)
+* “Prefer user nodes" (preferred)
+* “Allow virtual nodes" (soft)
 
 ```yaml
 affinity:
@@ -84,19 +84,19 @@ affinity:
 
 ```mermaid
 flowchart TD
-    subgraph AKS[“AKS Cluster”]
-        subgraph UserPool[“User Node Pool (VMs)”]
-            U1[“User Node 1”]
-            U2[“User Node 2”]
-            U3[“User Node 3”]
+    subgraph AKS[“AKS Cluster"]
+        subgraph UserPool[“User Node Pool (VMs)"]
+            U1[“User Node 1"]
+            U2[“User Node 2"]
+            U3[“User Node 3"]
         end
 
-        subgraph VirtualPool[“Virtual Node Pool (ACI)”]
-            V1[“Virtual Node”]
+        subgraph VirtualPool[“Virtual Node Pool (ACI)"]
+            V1[“Virtual Node"]
         end
 
-        P1[“Pod A (Deployment)”]
-        P2[“Pod B (Job)”]
+        P1[“Pod A (Deployment)"]
+        P2[“Pod B (Job)"]
     end
 
     P1 -->|preferred| U1 & U2 & U3
@@ -262,7 +262,7 @@ spec:
   template:
     spec:
       nodeSelector:
-        kubernetes.azure.com/mode: “user”
+        kubernetes.azure.com/mode: “user"
       # No toleration → no scheduling on virtual nodes possible
 ```
 

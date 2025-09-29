@@ -36,7 +36,7 @@ Here are my **hands-on experiences** – structured into Setup, Pitfalls, and Be
 
 ### Sidecar injection not always reliable
 
-The annotation `azure.workload.identity/inject-proxy-sidecar` didn’t consistently work across operator versions.
+The annotation `azure.workload.identity/inject-proxy-sidecar` didn't consistently work across operator versions.
 Sometimes special Helm templates or additional MutatingWebhook config were required.
 
 ### AuthorizationPermissionMismatch
@@ -76,7 +76,7 @@ But allow **extra iterations** during introduction – especially with complex H
 
 Workload Identity is a **key step for security and cloud-native architectures**.
 The initial rollout was not frictionless, but today our platform components run stable and secret-free.
-It’s worth it – even if debugging took more effort than the docs suggested.
+It's worth it – even if debugging took more effort than the docs suggested.
 
 ---
 
