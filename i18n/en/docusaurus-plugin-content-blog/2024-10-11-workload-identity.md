@@ -11,6 +11,7 @@ import Admonition from '@theme/Admonition';
 
 Workload Identity in **Azure Kubernetes Service (AKS)** promises fewer secrets, native AzureAD integration, and a replacement for the old AAD Pod Identity.  
 In practice, my projects in late 2024 brought not only smooth deployments but also some unexpected pitfalls.  
+<!-- truncate -->
 Here are my **hands-on experiences** – structured into Setup, Pitfalls, and Best Practices.
 
 ---
