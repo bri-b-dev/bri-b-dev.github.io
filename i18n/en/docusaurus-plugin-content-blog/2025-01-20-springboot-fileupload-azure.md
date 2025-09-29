@@ -1,30 +1,31 @@
 ---
 slug: springboot-fileupload-azure
-title: "Streaming File Uploads nach Azure Blob Storage mit Spring Boot"
+title: "Streaming File Uploads to Azure Blob Storage with Spring Boot"
 authors: brigitte
 tags: [spring-boot, kotlin, java, azure, blob-storage, fileupload]
 date: 2025-01-20
-description: "Speicherschonende Verarbeitung großer Uploads direkt in Azure Storage – ohne Zwischenspeicherung im RAM."
+description: "Memory-efficient processing of large uploads directly in Azure Storage—without temporary storage in RAM."
 ---
 
 import Admonition from '@theme/Admonition';
 
-Wer große Dateien (mehrere Gigabyte) über eine Webanwendung hochladen möchte, stößt schnell an Grenzen:  
-- Klassische Multipart-Verarbeitung lädt alles in den Speicher oder auf die Platte.  
-- Uploads dauern lange und blockieren Threads.  
-- Fehler beim Upload führen zu inkonsistenten Datenständen.  
+Anyone who wants to upload large files (several gigabytes) via a web application quickly reaches their limits:
+- Classic multipart processing loads everything into memory or onto the disk.
+- Uploads take a long time and block threads.
+- Upload errors lead to inconsistent data states.
 <!-- truncate -->
-
-Mit einem **streamingbasierten Ansatz** können Dateien direkt beim Upload in Azure Blob Storage geschrieben werden – ohne dass sie jemals im RAM oder auf der Platte zwischengespeichert werden.
+With a **streaming-based approach**, files can be written directly to Azure Blob Storage during upload – without ever being cached in RAM or on disk.
 
 ---
 
+
+
 ## ⚙️ Setup
 
-- **Spring Boot + Kotlin** als Basis  
-- [`commons-fileupload2-core`](https://commons.apache.org/proper/commons-fileupload/) für das Streaming-Multipart-Parsing  
-- **Azure Blob Storage SDK** für das Schreiben von Streams in Blobs  
-- **SAS-Tokens** für scoped & zeitlich begrenzten Zugriff  
+- **Spring Boot + Kotlin** as a Basis
+- [`commons-fileupload2-core`](https://commons.apache.org/proper/commons-fileupload/) for streaming multipart parsing
+- **Azure Blob Storage SDK** for writing streams to blobs
+- **SAS tokens** for scoped & time-limited access
 
 ### Streaming Multipart Upload
 
@@ -39,13 +40,13 @@ while (iterator.hasNext()) {
 }
 ```
 
-👉 Keine Datei landet auf der Platte oder im Arbeitsspeicher – der InputStream wird direkt nach Azure durchgereicht.
+👉 No file is stored on the disk or in the working memory – the InputStream is passed directly to Azure.
 
 ---
 
-## 🔍 Erweiterung: MIME-Type mit Tika ermitteln
+## 🔍 Extension: Determining MIME type with Tika
 
-Oft reicht der vom Client mitgelieferte `Content-Type` nicht. Um den **tatsächlichen MIME-Type** zu bestimmen, kann ein **Custom InputStream** genutzt werden, der die ersten Bytes cached, damit [Apache Tika](https://tika.apache.org/) eine Erkennung vornehmen kann:
+Often, the `Content-Type` provided by the client is not sufficient. To determine the **actual MIME type**, a **Custom InputStream** can be used, which caches the first bytes so that [Apache Tika](https://tika.apache.org/) can perform recognition:
 
 ```kotlin
 class TikaInputStream(private val source: InputStream) : InputStream() {
@@ -76,63 +77,63 @@ class TikaInputStream(private val source: InputStream) : InputStream() {
 }
 ```
 
-⚡ Vorteil: MIME-Erkennung passiert **im Stream**, ohne dass die Datei vollständig eingelesen werden muss.
+⚡ Advantage: MIME detection happens **in the stream** without having to read the entire file.
 
 ---
 
-## 📦 On-the-Fly-Kompression
+## 📦 On-the-fly compression
 
-Für bestimmte Datentypen lohnt sich **On-the-fly-Kompression**. Dabei wird der Upload-Stream direkt in einen `GZIPOutputStream` verpackt, bevor er nach Azure wandert:
+For certain data types, **on-the-fly compression** is worthwhile. This involves packing the upload stream directly into a `GZIPOutputStream` before it is transferred to Azure:
 
 ```kotlin
-val blobClient = containerClient.getBlobClient("${item.name}.gz")
+val blobClient = containerClient.getBlobClient(“${item.name}.gz”)
 blobClient.getBlockBlobClient().upload(
     GZIPOutputStream(item.inputStream),
-    item.size, // ggf. unbekannt, dann -1 und chunked upload verwenden
-    true
-)
+    item.size, // unknown if necessary, then use -1 and chunked upload
+    true)
+
 ```
 
-* Spart massiv Speicherplatz und Bandbreite.
-* Sollte **optional** sein (z. B. abhängig vom MIME-Type aus Tika).
-* Achtung bei Binärdateien (Videos, Bilder): hier bringt Kompression meist keinen Vorteil.
+* Saves a lot of storage space and bandwidth.
+* Should be **optional** (e.g., depending on the MIME type from Tika).
+* Caution with binary files (videos, images): compression usually does not offer any advantages here.
 
 ---
 
-## 🚧 Stolpersteine
+## 🚧 Stumbling blocks
 
-* **Multipart-Parsing:** Streams müssen zuverlässig geschlossen werden.
-* **Content-Length:** Nicht immer vom Client geliefert → evtl. chunked Upload nutzen.
-* **Fehlerhandling:** Bei Upload-Abbruch müssen ggf. auch Metadaten zurückgerollt werden.
-* **Tika + Kompression:** Erkennung zuerst durchführen, danach ggf. komprimieren.
+* **Multipart parsing:** Streams must be closed reliably.
+* **Content length:** Not always delivered by the client → possibly use chunked upload.
+* **Error handling:** If the upload is interrupted, metadata may also need to be rolled back.
+* **Tika + compression:** Perform recognition first, then compress if necessary.
 
 ---
 
-## ✅ Best Practices
+## ✅ Best practices
 
-* **Backpressure**: Uploads niemals puffern, sondern durchstreamen.
-* **Trennung von Metadaten & Storage**: eigene Services für Verantwortlichkeiten.
-* **SAS-Tokens**: mit Prefix-Scopes und kurzer Laufzeit generieren.
-* **Kombination Tika + Kompression**: Nur komprimieren, wenn es wirklich Sinn ergibt.
+* **Backpressure:** Never buffer uploads, but stream them through.
+* **Separation of metadata & storage**: separate services for separate responsibilities.
+* **SAS tokens**: generate with prefix scopes and short lifetime.
+* **Combination of Tika + compression**: Only compress if it really makes sense.
 
-<Admonition type="note" title="Praxisnutzen">
-Diese Technik nutzen wir in Produktionssystemen, um Uploads im Terabyte-Bereich performant, sicher und kostenoptimiert zu verarbeiten.
+<Admonition type="note" title="Practical benefits">
+We use this technique in production systems to process terabyte-scale uploads in a high-performance, secure, and cost-optimized manner.
 </Admonition>
 
 ---
 
-## 📌 Fazit
+## 📌 Conclusion
 
-Streaming Uploads sind in Spring Boot **machbar und produktionsreif** – und durch MIME-Erkennung sowie optionale On-the-fly-Kompression sogar noch flexibler.
-Das Resultat: **weniger Infrastrukturkosten, bessere Performance und höhere Robustheit**.
-
----
-
-> Komplettes, lauffähiges Beispiel: Streaming-Multipart mit `commons-fileupload2-core`, MIME-Erkennung via Apache Tika, optionale On‑the‑fly‑Kompression (GZIP) und Upload direkt in Azure Blob Storage über SAS – **ohne** RAM-/Disk-Puffer.
+Streaming uploads are **feasible and production-ready** in Spring Boot – and even more flexible thanks to MIME detection and optional on-the-fly compression.
+The result: **lower infrastructure costs, better performance, and greater robustness**.
 
 ---
 
-## Projekt-Setup (Gradle Kotlin DSL)
+> Complete, executable example: Streaming multipart with `commons-fileupload2-core`, MIME detection via Apache Tika, optional on-the-fly compression (GZIP), and upload directly to Azure Blob Storage via SAS – **without** RAM/disk buffers.
+
+---
+
+## Project-Setup (Gradle Kotlin DSL)
 
 **`build.gradle.kts`**
 
@@ -159,7 +160,7 @@ dependencies {
     // Streaming Multipart Parsing
     implementation("org.apache.commons:commons-fileupload2-core:2.0.0-M1")
 
-    // Apache Tika für MIME-Erkennung
+    // Apache Tika for MIME-Erkennung
     implementation("org.apache.tika:tika-core:2.9.2")
 
     // Jackson / Kotlin
@@ -172,30 +173,30 @@ dependencies {
 tasks.test { useJUnitPlatform() }
 ```
 
-> **Hinweis:** Versionen ggf. auf den aktuellen Stand bringen.
+> **Note:** Update versions to the latest version if necessary.
 
 **`src/main/resources/application.yaml`**
 
 ```yaml
 server:
   tomcat:
-    max-swallow-size: -1 # verhindert Abbruch bei großen Streams
+    max-swallow-size: -1 # prevents termination with large streams
     max-http-form-post-size: -1
 
 azure:
   storage:
-    # Vollqualifizierte SAS-URL des Containers, z. B.:
+    # Fully qualified SAS URL of the container, e.g.:
     # https://<account>.blob.core.windows.net/<container>?sv=...&sig=...
     containerSasUrl: ${AZURE_CONTAINER_SAS_URL:}
 
 upload:
   compression:
-    enabled: true # globaler Schalter, kann pro Request überschrieben werden
+    enabled: true # global switch, can be overridden per request
 ```
 
 ---
 
-## Konfiguration: Azure Blob Container Client
+## Configuration: Azure Blob Container Client
 
 **`src/main/kotlin/com/example/upload/AzureStorageConfig.kt`**
 
@@ -222,14 +223,14 @@ class AzureStorageConfig {
 }
 
 class AzureStorageProps {
-    /** Vollständige Container-SAS-URL inkl. Token */
+    /** Full container SAS URL including token */
     lateinit var containerSasUrl: String
 }
 ```
 
 ---
 
-## Utility: PeekableInputStream + MIME-Erkennung (Tika)
+## Utility: PeekableInputStream + MIME detection (Tika)
 
 **`src/main/kotlin/com/example/upload/io/PeekableInputStream.kt`**
 
@@ -240,7 +241,7 @@ import java.io.BufferedInputStream
 import java.io.InputStream
 
 /**
- * Wrappt einen InputStream, erlaubt Peek via mark/reset ohne volles Einlesen.
+ * Wraps an InputStream, allows peek via mark/reset without reading the entire stream.
  */
 class PeekableInputStream(source: InputStream, private val peekBufferSize: Int = 8192) : InputStream() {
     private val inBuf = if (source.markSupported()) source else BufferedInputStream(source, peekBufferSize)
@@ -281,7 +282,7 @@ object MimeDetector {
 
 ---
 
-## Service: Streaming Upload mit optionaler On‑the‑fly‑GZIP
+## Service: Streaming upload with optional on-the-fly GZIP compression
 
 **`src/main/kotlin/com/example/upload/UploadService.kt`**
 
@@ -314,9 +315,9 @@ class UploadService(private val container: BlobContainerClient) {
     )
 
     /**
-     * Streamt Multipart-Dateien direkt nach Azure. Keine Zwischenpuffer/Tempfiles.
-     * @param request Spring/Servlet Request-Adapter für FileUpload2
-     * @param forceCompression optionaler Override (Header/Param)
+     * Stream multipart files directly to Azure. No intermediate buffers/temp files.
+     * @param request Spring/Servlet request adapter for FileUpload2
+     * @param forceCompression Optional override (header/param)
      */
     fun handleStreamingUpload(request: RequestContext, forceCompression: Boolean? = null): UploadResult {
         try {
@@ -331,7 +332,7 @@ class UploadService(private val container: BlobContainerClient) {
                 val field = item.fieldName ?: "file"
                 val size = item.headers?.getHeader("Content-Length")?.toLongOrNull()
 
-                // Eingangsstream peek-fähig machen
+                // Make input stream peek-capable
                 val peekable = PeekableInputStream(item.inputStream)
                 val mime = MimeDetector.detect(peekable)
 
@@ -364,7 +365,7 @@ class UploadService(private val container: BlobContainerClient) {
     }
 
     private fun shouldCompressMime(mime: String): Boolean {
-        // Heuristik: textuell = komprimieren
+        // Heuristics: textual = compress
         if (mime.startsWith("text/")) return true
         return mime in setOf(
             "application/json",
@@ -378,12 +379,12 @@ class UploadService(private val container: BlobContainerClient) {
     private fun uploadStream(input: InputStream, blobName: String, compress: Boolean) {
         val client: BlockBlobClient = container.getBlobClient(blobName).blockBlobClient
 
-        // Für unbekannte Länge: über OutputStream schreiben (kein length nötig)
+        // For unknown length: write via OutputStream (no length required)
         client.getBlobOutputStream(true).use { blobOut ->
             if (compress) {
                 GZIPOutputStream(blobOut).use { gz ->
                     input.copyTo(gz, DEFAULT_BUFFER)
-                    // GZIPOutputStream .close() schreibt den Footer
+                    // GZIPOutputStream .close() writes Footer
                 }
             } else {
                 input.copyTo(blobOut, DEFAULT_BUFFER)
@@ -395,11 +396,11 @@ class UploadService(private val container: BlobContainerClient) {
 }
 ```
 
-> Wir nutzen **`BlockBlobClient.getBlobOutputStream(overwrite = true)`**, damit keine Content-Length benötigt wird. So bleibt der Upload vollständig streamingbasiert.
+> We use **`BlockBlobClient.getBlobOutputStream(overwrite = true)`** so that no content length is required. This keeps the upload completely streaming-based.
 
 ---
 
-## Controller: Minimal-API (Servlet Request durchreichen)
+## Controller: Minimal API (pass through servlet request)
 
 **`src/main/kotlin/com/example/upload/UploadController.kt`**
 
@@ -439,21 +440,21 @@ class UploadController(private val service: UploadService) {
 
 ---
 
-## Fehlerbehandlung & (optionaler) Rollback-Beispiel
+## Error handling & (optional) rollback example
 
-**Pattern:** Metadaten und Blob getrennt verwalten. Erst Blob schreiben, dann Metadaten anlegen – oder umgekehrt, mit **Kompensationsaktion**.
+**Pattern:** Manage metadata and blobs separately. Write the blob first, then create the metadata – or vice versa, with a **compensating action**.
 
 ```kotlin
 try {
     // 1) Blob/Upload
     val result = service.handleStreamingUpload(ctx)
 
-    // 2) Metadaten an Backend senden
+    // 2) Send metadata to backend
     metadataClient.createFor(result.files)
 
     return result
 } catch (ex: Exception) {
-    // Rollback-Strategie: evtl. angelegte Metadaten löschen
+    // Rollback strategy: delete any metadata that may have been created
     runCatching { metadataClient.rollback() }
     throw ex
 }
@@ -461,7 +462,7 @@ try {
 
 ---
 
-## Test mit `curl`
+## Test with `curl`
 
 ```bash
 curl -X POST "http://localhost:8080/api/upload" \
@@ -472,22 +473,22 @@ curl -X POST "http://localhost:8080/api/upload" \
 
 ---
 
-## Sicherheits- & Betriebsaspekte (Kurzchecklist)
+## Security & operational aspects (short checklist)
 
-* **SAS-Token**: prefix-scoped (nur Zielpfad), kurze Laufzeit, nur benötigte Rechte (Write/Create/Delete separat managen).
-* **Backpressure**: keine Puffer, keine Temporary Files; Tomcat-Limits (siehe `application.yaml`).
-* **Limits**: Server- und Proxy-Timeouts (AGIC/APIM) hoch genug einstellen.
-* **Observability**: Upload-Dauer, Bytes, Client-IP, MIME, Kompressionsflag loggen (ohne PII). Traces für Fehlerpfade.
-* **Validation**: Whitelist erlaubter MIME-Types, Max-File-Size serverseitig (frühzeitig abbrechen), Virenscan je nach Bedarf.
+* **SAS tokens**: prefix-scoped (target path only), short lifetime, only necessary permissions (manage write/create/delete separately).
+* **Backpressure**: no buffers, no temporary files; Tomcat limits (see `application.yaml`).
+* **Limits**: Set server and proxy timeouts (AGIC/APIM) high enough.
+* **Observability**: Log upload duration, bytes, client IP, MIME, compression flag (without PII). Traces for error paths.
+* **Validation**: Whitelist of permitted MIME types, max file size on the server side (cancel early), virus scan as needed.
 
 ---
 
 ## FAQ
 
-**Wie bestimme ich die Blob Content-Type/Encoding?**
-Wenn nicht komprimiert: setze `Content-Type` über Blob-HTTP-Header/Metadata. Bei GZIP: `Content-Encoding: gzip` setzen, optional Original-MIME als Benutzer-Metadatum speichern.
+**How do I determine the blob content type/encoding?**
+If not compressed: set `Content-Type` via blob HTTP header/metadata. For GZIP: set `Content-Encoding: gzip`, optionally save original MIME as user metadata.
 
-**Beispiel:**
+**Example:**
 
 ```kotlin
 val block = container.getBlobClient(blobName).blockBlobClient
@@ -497,23 +498,23 @@ val headers = com.azure.storage.blob.models.BlobHttpHeaders()
 block.setHttpHeaders(headers)
 ```
 
-> `setHttpHeaders` kann nach dem Upload gesetzt werden (separater Call) – oder man nutzt `beginUpload`/`commitBlockList` mit Optionen.
+> `setHttpHeaders` can be set after the upload (separate call) – or you can use `beginUpload`/`commitBlockList` with options.
 
-**Wie verhindere ich RAM-Spikes?**
-Buffers klein halten (1–4 MB), `copyTo`-Buffer konstant. Keine `ByteArrayOutputStream`-Akkumulation.
+**How do I prevent RAM spikes?**
+Keep buffers small (1–4 MB), `copyTo` buffer constant. No `ByteArrayOutputStream` accumulation.
 
-**Kann ich parallelisieren?**
-Für reine Streaming-Endpunkte: eher nein (keine Länge). Für große bekannte Dateien kann `ParallelTransferOptions` beim `upload(InputStream, length)` sinnvoll sein.
+**Can I parallelize?**
+For pure streaming endpoints: rather no (no length). For large known files, `ParallelTransferOptions` can be useful for `upload(InputStream, length)`.
 
 ---
 
-## End-to-End Sequenz (vereinfachte Schritte)
+## End-to-end sequence (simplified steps)
 
-1. Client sendet Multipart → Server parsed Stream per FileUpload2.
-2. MIME-Erkennung via Peek (Tika).
-3. Optional GZIP → Stream wird on-the-fly komprimiert.
-4. BlobOutputStream schreibt direkt nach Azure.
-5. Optional: HTTP-Header/Metadata setzen, Metadaten-Service aufrufen.
-6. Fehler → Kompensation (Rollback) auslösen.
+1. Client sends multipart → Server parses stream via FileUpload2.
+2. MIME detection via Peek (Tika).
+3. Optional GZIP → Stream is compressed on-the-fly.
+4. BlobOutputStream writes directly to Azure.
+5. Optional: Set HTTP header/metadata, call metadata service.
+6. Error → Trigger compensation (rollback).
 
 ---
