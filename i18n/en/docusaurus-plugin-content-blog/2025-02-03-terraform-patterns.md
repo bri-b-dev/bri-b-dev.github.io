@@ -1,14 +1,14 @@
 ---
 
 slug: terraform-patterns-aks-azure
-title: “Terraform Patterns for AKS & Azure"
+title: "Terraform Patterns for AKS & Azure"
 authors: brigitte
 tags: [terraform, aks, azure, rbac, network-policy, modules, cicd]
 date: 2025-02-03
-description: “Experiences with modular Terraform setups for AKS – from module design and RBAC to network policies and CI/CD."
+description: "Experiences with modular Terraform setups for AKS – from module design and RBAC to network policies and CI/CD."
 ---
 
-import Admonition from ‘@theme/Admonition';
+import Admonition from '@theme/Admonition';
 
 AKS projects grow quickly: **clusters, node pools, identities, networks, ACR, policies** – and parameters vary per environment (dev/test/prod). Without structure, the code base becomes fragile. In this post, I'll show **proven Terraform patterns** for Azure & AKS from projects, including **RBAC** and **network policy** pitfalls.
 <!--truncate-->
@@ -16,7 +16,7 @@ AKS projects grow quickly: **clusters, node pools, identities, networks, ACR, po
 
 ## 🧱 Module architecture: Separate by responsibilities
 
-**Goal:** Reusable, clearly defined modules instead of a “monolith."
+**Goal:** Reusable, clearly defined modules instead of a "monolith."
 
 ```text
 infra/
@@ -98,12 +98,12 @@ output "cluster_id" { value = azurerm_kubernetes_cluster.this.id }
 
 ### 1) Azure RBAC vs. Kubernetes RBAC
 
-* **Azure RBAC for Kubernetes** (“AKS-managed AAD") simplifies AuthN/AuthZ, but **mapping & propagation** may take seconds/minutes.
+* **Azure RBAC for Kubernetes** ("AKS-managed AAD") simplifies AuthN/AuthZ, but **mapping & propagation** may take seconds/minutes.
 * **Pattern:** Create **AAD groups** for cluster roles (e.g. `aks-admins`, `aks-devs`) and pass their object IDs as module input.
 
 ```hcl
 # Pseudocode – module uses these IDs
-variable “aad_admin_group_object_ids" { type = list(string) }
+variable "aad_admin_group_object_ids" { type = list(string) }
 # In the cluster block: activate AAD/RBAC and register groups as admins
 ```
 
@@ -115,9 +115,9 @@ variable “aad_admin_group_object_ids" { type = list(string) }
 * Additionally: Build/Push pipeline → `AcrPush` for CI service principal or UAMI.
 
 ```hcl
-resource “azurerm_role_assignment" “kubelet_acr_pull" {
+resource "azurerm_role_assignment" "kubelet_acr_pull" {
   scope                = azurerm_container_registry.acr.id
-  role_definition_name = “AcrPull"
+  role_definition_name = "AcrPull"
   principal_id         = module.aks.kubelet_identity_principal_id
 }
 ```
