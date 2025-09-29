@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkbri_b_dev_github_io=self.webpackChunkbri_b_dev_github_io||[]).push([[2498],{2498:(e,i,b)=>{b.d(i,{createArchitectureServices:()=>r.S});var r=b(3009);b(8198)}}]);

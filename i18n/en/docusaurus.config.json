@@ -1,9 +1,0 @@
-{
-  "themeConfig": {
-    "announcementBar": {
-      "id": "job-hint",
-      "content": "🚀 Open to exciting roles in Backend & Cloud – <a href=\"mailto:brigitte_boehm@outlook.de\">Contact</a>",
-      "isCloseable": true
-    }
-  }
-}

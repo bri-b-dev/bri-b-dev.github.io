@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkbri_b_dev_github_io=self.webpackChunkbri_b_dev_github_io||[]).push([[8188],{8188:(e,i,b)=>{b.d(i,{createPieServices:()=>_.f});var _=b(9786);b(8198)}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkbri_b_dev_github_io=self.webpackChunkbri_b_dev_github_io||[]).push([[8716],{8716:(e,b,i)=>{i.d(b,{createPacketServices:()=>_.$});var _=i(9811);i(8198)}}]);
